@@ -1,5 +1,5 @@
 ### Overview
-This demo Web app shows how to use RingCentral call-log API service.
+Access your RingCentral account's call log database using the call-log API.
 
 ### RingCentral Connect Platform
 RingCentral Connect Platform is a rich RESTful API platform with more than 70 APIs for business communication includes advanced voice calls, chat messaging, SMS/MMS and Fax.
