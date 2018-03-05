@@ -17,6 +17,7 @@ npm intall --save
 
 cp dotenv .env
 ```
+Remember to add your app client ID and client secret as well as account login credentials to the .env file.
 
 ## RingCentral JavaScript/Node JS SDK
 The SDK is available at https://github.com/ringcentral/ringcentral-js

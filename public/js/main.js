@@ -1,8 +1,5 @@
 window.onload = init;
 var colors = ["BlanchedAlmond","Blue","BlueViolet","Brown","BurlyWood","CadetBlue","Chartreuse","Chocolate","Coral","CornflowerBlue","Cornsilk","Crimson","Cyan","DarkBlue","DarkCyan","DarkGoldenRod","DarkGray","DarkGrey","DarkGreen","DarkKhaki","DarkMagenta","DarkOliveGreen","Darkorange","DarkOrchid"];
-/*
-,"DarkRed","DarkSalmon","DarkSeaGreen","DarkSlateBlue","DarkSlateGray","DarkSlateGrey","DarkTurquoise","DarkViolet","DeepPink","DeepSkyBlue","DimGray","DimGrey","DodgerBlue","FireBrick","FloralWhite","ForestGreen","Fuchsia","GhostWhite","Gold","GoldenRod","Green","GreenYellow","HoneyDew","HotPink","IndianRed","Indigo","Ivory","Khaki","Lavender","LavenderBlush","LawnGreen","LemonChiffon","LightBlue","LightCoral","LightCyan","LightGoldenRodYellow","LightGray","LightGrey","LightGreen","LightPink","LightSalmon","LightSeaGreen","LightSkyBlue","LightSlateGray","LightSlateGrey","LightSteelBlue","LightYellow","Lime","LimeGreen","Linen","Magenta","Maroon","MediumAquaMarine","MediumBlue","MediumOrchid","MediumPurple","MediumSeaGreen","MediumSlateBlue","MediumSpringGreen","MediumTurquoise","MediumVioletRed","MidnightBlue","MintCream","MistyRose","Moccasin","NavajoWhite","Navy","OldLace","Olive","OliveDrab","Orange","OrangeRed","Orchid","PaleGoldenRod","PaleGreen","PaleTurquoise","PaleVioletRed","PapayaWhip","PeachPuff","Peru","Pink","Plum","PowderBlue","Purple","Red","RosyBrown","RoyalBlue","SaddleBrown","Salmon","SandyBrown","SeaGreen","SeaShell","Sienna","Silver","SkyBlue","SlateBlue","SlateGray","SlateGrey","Snow","SpringGreen","SteelBlue","Tan","Teal","Thistle","Tomato","Turquoise","Violet","Wheat","White","WhiteSmoke","Yellow","YellowGreen"];
-*/
 var callLogsData = null
 function init() {
   $( "#fromdatepicker" ).datepicker({ dateFormat: "yy-mm-dd"});
@@ -226,32 +223,6 @@ CallLogsData.prototype = {
     item = ["Outbound Fax", this.outfaxCount, "brown"];
     params.push(item);
 
-    drawBarChart(w, h, params);
-  },
-  TotalCallsWithResultsGraph: function(w, h, type){
-    var params = [];
-    var index = 1
-    if (type == "incall"){
-      var arr = ['Total Inbound Calls', 'Total', { role: "style" } ];
-      params.push(arr);
-      var total = ["Total", this.incallCount, colors[0]]
-      params.push(total)
-    }else if (type == "outcall"){
-      var arr = ['Total Outbound Calls', 'Total', { role: "style" } ];
-      params.push(arr);
-      var total = ["Total", this.outcallCount, colors[0]]
-      params.push(total)
-    }else if (type == "infax"){
-      var arr = ['Total Inbound Faxes', 'Total', { role: "style" } ];
-      params.push(arr);
-      var total = ["Total", this.infaxCount, colors[0]]
-      params.push(total)
-    }else if (type == "outfax"){
-      var arr = ['Total Outbound Faxes', 'Total', { role: "style" } ];
-      params.push(arr);
-      var total = ["Total", this.outfaxCount, colors[0]]
-      params.push(total)
-    }
     drawBarChart(w, h, params);
   },
   CallsWithResultsGraph: function(w, h, type){
@@ -530,7 +501,6 @@ function drawGraphs(){
       alert("No inbound call during this period.")
       return
     }
-    //callLogsData.TotalCallsWithResultsGraph(150, w/4 , "incall")
     callLogsData.CallsWithResultsGraph(w-100, w/4, "incall")
   }else if (selectedOption == 'outcallwithresults'){
     var w = $(window).width();
@@ -538,7 +508,6 @@ function drawGraphs(){
       alert("No outbound call during this period.")
       return
     }
-    //callLogsData.TotalCallsWithResultsGraph(150, w/4 , "outcall")
     callLogsData.CallsWithResultsGraph(w-100, w/4, "outcall")
   }else if (selectedOption == 'infaxwithresults'){
     var w = $(window).width();
@@ -546,7 +515,6 @@ function drawGraphs(){
       alert("No inbound fax during this period.")
       return
     }
-    //callLogsData.TotalCallsWithResultsGraph(150, w/4 , "infax")
     callLogsData.CallsWithResultsGraph(w-100, w/4, "infax")
   }else if (selectedOption == 'outfaxwithresults'){
     var w = $(window).width();
@@ -554,7 +522,6 @@ function drawGraphs(){
       alert("No outbound fax during this period.")
       return
     }
-    //callLogsData.TotalCallsWithResultsGraph(150, w/4 , "outfax")
     callLogsData.CallsWithResultsGraph(w-100, w/4, "outfax")
   }else if (selectedOption == 'incallwithactions'){
     var w = $(window).width();
@@ -562,7 +529,6 @@ function drawGraphs(){
       alert("No inbound call during this period.")
       return
     }
-    //callLogsData.TotalCallsWithResultsGraph(150, w/4 , "incall")
     callLogsData.CallsWithActionsGraph(w-100, w/4, "incall")
   }else if (selectedOption == 'outcallwithactions'){
     var w = $(window).width();
@@ -645,7 +611,6 @@ function drawPieChart(params)
         pieSliceText: 'value',
         legend: 'both',
         pieHole: 0.4,
-        //colors:[greenColor[greenIndex],redColor[redIndex]]
     };
     var element = document.createElement("span");
     element.setAttribute("style", "display:inline;");
@@ -674,17 +639,12 @@ function drawBarChart(w, h, params)
       legend: { position: "none" },
     };
 
-    //document.getElementById(topic).style.display = "block";
-    //var chart = new google.visualization.ColumnChart(document.getElementById(topic));
     var td = document.createElement("td");
     var element = document.createElement('div')
     td.append(element)
     $("#graphs").append(td)
     var chart = new google.visualization.ColumnChart(element);
-
     chart.draw(view, options);
-    //element.setAttribute("style", "display:inline;");
-    //element.style.display = "inline";
 }
 
 function drawScatterChart(w, h, params, title) {
@@ -709,24 +669,12 @@ function drawScatterChart(w, h, params, title) {
 
 function drawMapChart(w, h, params, title) {
     var data = google.visualization.arrayToDataTable(params);
-    var url = 'https://icons.iconarchive.com/icons/icons-land/vista-map-markers/48/';
-
     var options = {
       width: w,
       height: h,
       zoomLevel: 5,
       showTooltip: true,
       showInfoWindow: true,
-      icons: {
-          blue: {
-            normal:   url + 'Map-Marker-Ball-Azure-icon.png',
-            selected: url + 'Map-Marker-Ball-Right-Azure-icon.png'
-          },
-          green: {
-            normal:   url + 'Map-Marker-Push-Pin-1-Chartreuse-icon.png',
-            selected: url + 'Map-Marker-Push-Pin-1-Right-Chartreuse-icon.png'
-          }
-        }
     };
     var td = document.createElement("td");
     var element = document.createElement('div')
