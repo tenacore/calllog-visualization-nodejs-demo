@@ -17,11 +17,11 @@ var server = require('http').createServer(app);
 server.listen(port);
 console.log("listen to port " + port)
 var rc_engine = require('./engine');
+
 app.get('/', function (req, res) {
   rc_engine.login(req, res)
 })
 
 app.post('/readlogs', function (req, res) {
-  console.log("readCallLogs")
   rc_engine.readCallLogs(req, res)
 })
