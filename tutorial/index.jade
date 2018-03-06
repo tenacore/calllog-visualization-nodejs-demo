@@ -1,0 +1,120 @@
+.chapter(data-title='Visualize Your Business Communications History')
+.step(data-title='Welcome!', data-file='README.md', data-highlight='1-8')
+  :markdown
+    ## Welcome to the tutorial
+
+    Learn how to build a Web app to access your company call log using the call-log APIs and visualize the communications history on Google graphs.
+
+    ### Requirements
+    You must have a RingCentral developer account. If you don't have one, click [here](https://developer.ringcentral.com) to create a free developer account.
+
+    You also have to [create a RingCentral app](https://developer.ringcentral.com/library/getting-started.html) with the "ReadCallLog" permissions and retrieve the app Client Id and Client Secret for using with this tutorial.
+
+.step(data-title='Project setup', data-file='README.md', data-highlight='10-19')
+  :markdown
+    ### Clone the project from GitHub
+    Run the commands shown beside to clone the project from GitHub to your local machine.
+
+    Browse to the local folder and install the dependency libraries.
+
+    Copy the dotenv to create the .env.
+
+.step(data-title='Set environment', data-file='dotenv')
+  :markdown
+    ### Specify environment parameters and
+
+    Open the .env and provide your app credentials, RingCentral sandbox account's username and password.
+
+    You are good to run the demo now:
+
+    $ node index.js
+
+    Open your browser at http://localhost:3002
+
+.step(data-title='Design the Web UI', data-file='views/index.ejs', data-highlight='39-43')
+  :markdown
+    ### Get from and to date
+
+    First, we create a web page and add the 2 inputs for taking the dates from and to. The _From Date_ and _To Date_ will define the period of time we want to read the call log data.
+
+    ![](images/main_menu.png)
+
+    The call-log API also takes other parameters but they might not be needed so hide them and make them visible when clicking the __Show Options__
+
+.step(data-title='Phone number and extension number', data-file='views/index.ejs', data-highlight='53-56')
+  :markdown
+    ### Phone number and extension number filters.
+
+    ![](images/Option1.png)
+
+    [Call-log API reference](https://developer.ringcentral.com/api-docs/latest/index.html#!#RefUserCallLog.html)
+
+.step(data-title='Direction and Type filters', data-file='views/index.ejs', data-highlight='58-69')
+  :markdown
+    ### Direction and Type filters.
+
+    ![](images/Option2.png)
+
+    [Call-log API reference](https://developer.ringcentral.com/api-docs/latest/index.html#!#RefUserCallLog.html)
+
+.step(data-title='Transport and View filters', data-file='views/index.ejs', data-highlight='58-69')
+  :markdown
+    ### Transport and View filters.
+
+    ![](images/Option3.png)
+
+    [Call-log API reference](https://developer.ringcentral.com/api-docs/latest/index.html#!#RefUserCallLog.html)
+
+.step(data-title='Blocked and recording calls', data-file='views/index.ejs', data-highlight='39-43')
+  :markdown
+    ### Read blocked calls and calls with recording
+
+    ![](images/Option4.png)
+
+    [Call-log API reference](https://developer.ringcentral.com/api-docs/latest/index.html#!#RefUserCallLog.html)
+
+.step(data-title='Instantiate the RingCentral Node JS SDK', data-file='engine.js', data-highlight='4-10')
+  :markdown
+    ### Instantiate the RingCentral Node JS SDK
+
+    First, we create the SDK instance `rcsdk` and initialize it with the app client Id and client Secret.
+
+    Then we call the `rcsdk.platform()` function to get the instance of the platform component. The `platform` instance will be used later to login and call RingCentral APIs.
+
+.step(data-title='Login to RingCentral account', data-file='engine.js', data-highlight='12-23')
+  :markdown
+    ### Login to RingCentral account
+
+    To login RingCentral account, we call the `platform.login()` function with the account's username and password predefined in the _.env_ file.
+
+.step(data-title='Read the call log', data-file='engine.js', data-highlight='24-29')
+  :markdown
+    ### Read the call log
+
+    When the readCallLogs() function is called, we detects if the request is made to access the account level or the extension level then we define the endpoint accordingly.
+
+
+    We also get the API's query parameters from the client and .
+
+    ```
+    platform.get(endpoint, req.body)
+    ```
+
+.step(data-title='Read the call log', data-file='engine.js', data-highlight='31-41')
+  :markdown
+    ### Read the call log
+
+    When the readCallLogs() function is called, we detects if the request is made to access the account level or the extension level then we define the endpoint accordingly.
+
+    ```
+        if (req.query.access == "account")
+          endpoint = '/account/~/call-log'
+        else
+          endpoint = '/account/~/extension/~/call-log'
+    ```
+
+        We also get the API's query parameters from the client and .
+
+        ```
+        platform.get(endpoint, req.body)
+        ```

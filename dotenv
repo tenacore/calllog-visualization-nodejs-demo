@@ -1,7 +1,8 @@
 PRINT_LOG=yes
 PORT=3002
-SERVER=https://platform.devtest.ringcentral.com
+
 APP_KEY=YourClientID
 APP_SECRET=YourClientSecret
-USERNAME=
-PASSWORD=
+
+USERNAME=YourAccountLoginUsername
+PASSWORD=YourAccountLoginPassword

@@ -16,7 +16,8 @@
     "dotenv": "^4.0.0",
     "ejs": "^2.5.6",
     "express": "^4.15.3",
-    "ringcentral": "^3.1.1"
+    "ringcentral": "^3.1.1",
+    "saurus": ""
   },
   "engines": {
     "node": "8.1.2"

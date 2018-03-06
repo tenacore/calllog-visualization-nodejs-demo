@@ -58,9 +58,9 @@ function CallLogsData(records) {
   this.voiceOutboundResults = []
 
   var timeZone = parseInt($("#timezone").val(), 10);
-  for (var i = 0; i<records.length; i++){
+  //for (var i = 0; i<records.length; i++){
+  for (var record of records){
     try {
-      var record = records[i]
       if (record.type == "Fax") {
         if (record.direction == "Inbound") {
           this.infaxCount += 1 // check
