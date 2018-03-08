@@ -1,14 +1,15 @@
 .chapter(data-title='Visualize Your Business Communications History')
 .step(data-title='Welcome!', data-file='README.md', data-highlight='1-8')
   :markdown
-    ### Welcome to the tutorial
-
-    Learn how to build a Web app to access your company's call log using the call-log API, process the data and display the information on Google graphs.
-
     ### Requirements
-    You must have a RingCentral developer account. If you don't have one, click [here](https://developer.ringcentral.com) to create a free developer account.
+    * You must have a RingCentral developer account. If you don't have one, click [here](https://developer.ringcentral.com) to create a free developer account.
 
-    You also have to [create a RingCentral app](https://developer.ringcentral.com/library/getting-started.html) with the "ReadCallLog" permission to retrieve the app Client Id and Client Secret for using with this tutorial.
+    * You also have to [create a RingCentral app](https://developer.ringcentral.com/library/getting-started.html) with the "ReadCallLog" permission to retrieve the app Client Id and Client Secret for using with this tutorial.
+
+    ### Prerequisite knowledge
+    * We use JQuery to send HTTP requests to our web server. If you are not familiar with JQuery, click [here](https://jquery.com/) to learn more.
+
+    * We use Express framework to build the demo web app. If you are not familiar with Express, click [here](https://expressjs.com/en/starter/installing.html) to learn more.
 
 .step(data-title='Project setup', data-file='README.md', data-highlight='10-19')
   :markdown
@@ -39,7 +40,7 @@
 
     Now, let's create a web page and add 2 date pickers for taking the dates. The _From Date_ and _To Date_ will be used to specify the date range we want to read the call log data.
 
-    The call-log API also takes other parameters, but they are less frequently needed in this tutorial so we hide them to save some space and make them visible when we click the __Show Options__ button.
+    The call-log API also takes other query configurations, but they are less frequently needed in this tutorial so we hide them to save some space and make them visible when we click the __Show Options__ button.
 
 .step(data-title='Phone number and Extension number', data-file='views/index.ejs', data-highlight='53-56')
   :markdown
@@ -47,9 +48,9 @@
 
     ![](images/Option1.png)
 
-    * If the __phoneNumber__ parameter is specified, the API returns all calls (both incoming and outgoing) containing the mentioned phone number of a caller or callee.
+    * If the __phoneNumber__ parameter is specified, the API returns call logs (of both incoming and outgoing calls) containing the mentioned phone number of a caller or callee.
 
-    * If the __extensionNumber__ is specified, the API returns call log data for that particular extension only.
+    * If the __extensionNumber__ is specified, the API returns call logs for that particular extension only.
 
     [See call-log API reference](https://developer.ringcentral.com/api-docs/latest/index.html#!#RefUserCallLog.html)
 
@@ -59,9 +60,9 @@
 
     ![](images/Option2.png)
 
-    * If the __direction__ parameter is specified as _Inbound_ or _Outbound_, the API returns records with the specified direction only.
+    * If the __direction__ parameter is specified as _Inbound_ or _Outbound_, the API returns call logs for the specified direction only. By default, the API returns call logs for both directions.
 
-    * If the __type__ parameter is specified as _Voice_ or _Fax_, the API returns records for the specified type only.
+    * If the __type__ parameter is specified as _Voice_ or _Fax_, the API returns call logs for the specified type only. By default, the API returns call logs for both types.
 
     [See call-log API reference](https://developer.ringcentral.com/api-docs/latest/index.html#!#RefUserCallLog.html)
 
@@ -71,9 +72,9 @@
 
     ![](images/Option3.png)
 
-    * If the __transport__ parameter is specified as _PSTN_ or _VoIP_, the API returns records with the specified transport only.
+    * If the __transport__ parameter is specified as _PSTN_ or _VoIP_, the API returns call logs for the specified transport only. By default, the API returns call logs for both transport modes.
 
-    * If the __view__ parameter is specified as _Simple_, the API returns records with basic information or extended data such as billing and leg type information, respectively.
+    * The __view__ parameter can be specified as _Simple_ or _Detailed_, the API returns call logs with basic information or extended data (such as billing and leg type information), respectively. The default value is _Simple_.
 
     [See call-log API reference](https://developer.ringcentral.com/api-docs/latest/index.html#!#RefUserCallLog.html)
 
@@ -83,9 +84,9 @@
 
     ![](images/Option4.png)
 
-    * If the __readBlocked__ flag is true, the API returns call log for calls from and to blocked numbers
+    * If the __readBlocked__ flag is true, the API returns call logs for all calls within the date range, including calls from and to blocked numbers. The default value is __true__.
 
-    * If the __withRecoding__ flag is true, the API returns call log for calls with call recording.
+    * If the __withRecoding__ flag is true, the API returns call logs for only calls with call recording. The default value is __false__.
 
     [See call-log API reference](https://developer.ringcentral.com/api-docs/latest/index.html#!#RefUserCallLog.html)
 
@@ -95,9 +96,11 @@
 
     ![](images/Options_Read.png)
 
-    We also control the access level by adding the control parameter to tell our server how to access the call log. We will pass the access control to the POST query parameter
+    We also control the access level by adding the control parameter to tell our server how to access the call log.
 
-.step(data-title='Create API query parameters', data-file='public/js/main.js', data-highlight='565-587')
+    __Note:__ This is not the call-log API's parameter! It will be passed to our server for defining the API's access level.
+
+.step(data-title='Create API query parameters', data-file='public/js/main.js', data-highlight='553-575')
   :markdown
     ### Create API query parameters - Client side
 
@@ -117,7 +120,7 @@
 
     Then we call the `rcsdk.platform()` function to get the instance of the platform component. The `platform` instance will be used later to login and call RingCentral APIs.
 
-.step(data-title='Login to RingCentral account', data-file='engine.js', data-highlight='12-23')
+.step(data-title='Login to RingCentral account', data-file='engine.js', data-highlight='13-23')
   :markdown
     ### Login to RingCentral account
 
@@ -127,9 +130,9 @@
   :markdown
     ### Call the call-log API
 
-    When the readCallLogs() function is called, we detects if the request is made to access the account level or the extension level then we define the endpoint accordingly.
+    When the server readCallLogs() function is called, we detects if the request is made to access the account level or the extension level then we define the endpoint accordingly.
 
-    Our server receives the call-log API's query parameters from the client as a JSON object in the __req.body__. We just use the platform instance to call the call-log API as highlighted below:
+    We receive the call-log API's query parameters from the client as a JSON object in the __req.body__. We just use the __platform__ instance to call the call-log API as highlighted below:
 
     ```
     platform.get(endpoint, req.body)
@@ -149,7 +152,7 @@
 
     Upon the arrival of the response from our server, we check the response to see if it is an error or not.
 
-    If the response is call log data, we create a __CallLogsData__ object passing along the call log data. The __CallLogsData__ object is a class which parses the data and process the information to draw them on graphs.
+    If the response is call log data, we create a __CallLogsData__ object passing along the call log data. The __CallLogsData__ object is a class which parses the call log data and process the information to make them ready for displaying on graphs.
 
 .step(data-title='Process call log data', data-file='public/js/main.js', data-highlight='62-100')
   :markdown
@@ -199,7 +202,7 @@
     this.timeSliceVoicemails = new Array(24)
     ```
 
-.step(data-title='Display information on charts', data-file='public/js/main.js', data-highlight='477-562')
+.step(data-title='Display information on charts', data-file='public/js/main.js', data-highlight='477-550')
   :markdown
     ### Display information on charts
 

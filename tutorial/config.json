@@ -1,6 +1,6 @@
 {
     "title": "Visualize Your Business Communications History",
     "repo": "ringcentral-tutorials/calllog-visualization-nodejs-demo",
-    "description": "Learn how to build a Web app to access your company call log using the call-log APIs and visualize the communications history on Google graphs. Click the \"Start Tutorial\" button below to start.",
+    "description": "Learn how to build a Web app to access your company's call log database by using the RingCentral call-log API, process the data and display the company's communications history on Google graphs. Click the \"Start Tutorial\" button below to start.",
     "heroku": false
 }
