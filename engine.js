@@ -2,10 +2,10 @@ var RC = require('ringcentral')
 require('dotenv').load()
 
 var rcsdk = new RC({
-  server:process.env.SERVER,
-  appKey: process.env.APP_KEY,
-  appSecret:process.env.APP_SECRET
-})
+    server:RC.server.sandbox,
+    appKey: process.env.CLIENT_ID,
+    appSecret:process.env.CLIENT_SECRET
+  })
 
 var platform = rcsdk.platform()
 
