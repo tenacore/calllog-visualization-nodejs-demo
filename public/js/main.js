@@ -22,10 +22,10 @@ function init() {
 // Main class
 function CallLogsData(records) {
   this.records = records
-  this.timeSliceInbound = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-  this.timeSliceOutbound = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-  this.timeSliceMissedCalls = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-  this.timeSliceVoicemails = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+  this.timeSliceInbound = new Array(24)
+  this.timeSliceOutbound = new Array(24)
+  this.timeSliceMissedCalls = new Array(24)
+  this.timeSliceVoicemails = new Array(24)
   this.incallCount = 0;
   this.outcallCount = 0
   this.voiceCallCount = 0
@@ -58,8 +58,8 @@ function CallLogsData(records) {
   this.voiceOutboundResults = []
 
   var timeZone = parseInt($("#timezone").val(), 10);
-  //for (var i = 0; i<records.length; i++){
-  for (var record of records){
+
+  for (var record of this.records){
     try {
       if (record.type == "Fax") {
         if (record.direction == "Inbound") {
@@ -82,7 +82,7 @@ function CallLogsData(records) {
           }
           this.__addItemToExistingList(record.action, this.voiceInboundActions)
           this.__addItemToExistingList(record.result, this.voiceInboundResults)
-        }else{ // outbound call. Adjust start time with user's time zone
+        }else{ // outbound call.
           this.outcallCount += 1
           this.totalOutcallsDuration += record.duration
           if (record.recording != undefined){
@@ -154,10 +154,7 @@ CallLogsData.prototype = {
       this.timeSliceVoicemails[n] = 0
     }
     var timeVal = $("#timezone").val()
-    if (isNaN(timeVal)){
-      alert("Please enter valid time zone")
-      return
-    }
+
     var timeZone = parseInt(timeVal, 10);
     for (var i=0; i<this.records.length; i++){
       var record = this.records[i]
@@ -481,71 +478,61 @@ function drawGraphs(){
   $("#timezone_block").hide()
   $("#map_block").hide()
   $("#graphs").empty()
+  var w = $(window).width();
   var selectedOption = $('#graphoption').val()
   if (selectedOption == 'callbytype'){
-    var w = $(window).width();
     callLogsData.FaxVsVoiceGraph(w/2, w/4)
     callLogsData.CallsFaxesByDirectionGraph(w/2, w/4)
   }else if (selectedOption == 'callbyduration'){
-    var w = $(window).width();
     callLogsData.CallsByDirectionGraph(w/3, w/4)
     callLogsData.CallsByDurationGraph(w/3, w/4)
     callLogsData.CallsByRecordingGraph(w/3, w/4)
   }else if (selectedOption == 'faxbyduration'){
-    var w = $(window).width();
     callLogsData.FaxesByDirectionGraph(w/2, w/4)
     callLogsData.FaxesByDurationGraph(w/2, w/4)
   }else if (selectedOption == 'incallwithresults'){
-    var w = $(window).width();
     if (callLogsData.incallCount <= 0) {
       alert("No inbound call during this period.")
       return
     }
     callLogsData.CallsWithResultsGraph(w-100, w/4, "incall")
   }else if (selectedOption == 'outcallwithresults'){
-    var w = $(window).width();
     if (callLogsData.outcallCount <= 0) {
       alert("No outbound call during this period.")
       return
     }
     callLogsData.CallsWithResultsGraph(w-100, w/4, "outcall")
   }else if (selectedOption == 'infaxwithresults'){
-    var w = $(window).width();
     if (callLogsData.infaxCount <= 0) {
       alert("No inbound fax during this period.")
       return
     }
     callLogsData.CallsWithResultsGraph(w-100, w/4, "infax")
   }else if (selectedOption == 'outfaxwithresults'){
-    var w = $(window).width();
     if (callLogsData.outfaxCount <= 0) {
       alert("No outbound fax during this period.")
       return
     }
     callLogsData.CallsWithResultsGraph(w-100, w/4, "outfax")
   }else if (selectedOption == 'incallwithactions'){
-    var w = $(window).width();
     if (callLogsData.incallCount <= 0) {
       alert("No inbound call during this period.")
       return
     }
     callLogsData.CallsWithActionsGraph(w-100, w/4, "incall")
   }else if (selectedOption == 'outcallwithactions'){
-    var w = $(window).width();
     if (callLogsData.outcallCount <= 0) {
       alert("No outbound call during this period.")
       return
     }
     callLogsData.CallsWithActionsGraph(w-100, w/4, "outcall")
   }else if (selectedOption == 'infaxwithactions'){
-    var w = $(window).width();
     if (callLogsData.infaxCount <= 0) {
       alert("No inbound fax during this period.")
       return
     }
     callLogsData.CallsWithActionsGraph(w-100, w/4, "infax")
   }else if (selectedOption == 'outfaxwithactions'){
-    var w = $(window).width();
     if (callLogsData.outfaxCount <= 0) {
       alert("No outbound fax during this period.")
       return
@@ -554,18 +541,15 @@ function drawGraphs(){
   }else if (selectedOption == 'callsdensity'){
     $("#timezone_block").show()
     $("#map_block").hide()
-    var w = $(window).width();
     callLogsData.CallsDensityGraph(w/4, w/6)
   }else if (selectedOption == 'callsmap'){
     $("#timezone_block").hide()
     $("#map_block").show()
-    var w = $(window).width();
     callLogsData.CallsMapGraph(w, w/3)
   }
 }
 
 function readCallLogs(){
-  var url = "readlogs?access=" + $('#access_level').val();
   var configs = {}
   if ($('#phoneNumber').val() != "")
     configs['phoneNumber'] = $('#phoneNumber').val()
@@ -587,6 +571,7 @@ function readCallLogs(){
   configs['dateTo'] = $("#todatepicker").val() + "T23:59:59.999Z"
   configs['perPage'] = 1000
 
+  var url = "readlogs?access=" + $('#access_level').val();
   var posting = $.post( url, configs );
   posting.done(function( response ) {
     var res = JSON.parse(response)

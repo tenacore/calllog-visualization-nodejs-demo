@@ -1,29 +1,29 @@
 .chapter(data-title='Visualize Your Business Communications History')
 .step(data-title='Welcome!', data-file='README.md', data-highlight='1-8')
   :markdown
-    ## Welcome to the tutorial
+    ### Welcome to the tutorial
 
-    Learn how to build a Web app to access your company call log using the call-log APIs and visualize the communications history on Google graphs.
+    Learn how to build a Web app to access your company's call log using the call-log API, process the data and display the information on Google graphs.
 
     ### Requirements
     You must have a RingCentral developer account. If you don't have one, click [here](https://developer.ringcentral.com) to create a free developer account.
 
-    You also have to [create a RingCentral app](https://developer.ringcentral.com/library/getting-started.html) with the "ReadCallLog" permissions and retrieve the app Client Id and Client Secret for using with this tutorial.
+    You also have to [create a RingCentral app](https://developer.ringcentral.com/library/getting-started.html) with the "ReadCallLog" permission to retrieve the app Client Id and Client Secret for using with this tutorial.
 
 .step(data-title='Project setup', data-file='README.md', data-highlight='10-19')
   :markdown
     ### Clone the project from GitHub
-    Run the commands shown beside to clone the project from GitHub to your local machine.
+    Run the commands shown on the right-hand side to clone the project from GitHub to your local machine.
 
-    Browse to the local folder and install the dependency libraries.
+    Browse to the project folder on your local machine and install the dependency libraries.
 
     Copy the dotenv to create the .env.
 
 .step(data-title='Set environment', data-file='dotenv')
   :markdown
-    ### Specify environment parameters and
+    ### Set environment parameters and login credentials
 
-    Open the .env and provide your app credentials, RingCentral sandbox account's username and password.
+    Open the __.env__ file and specify your app credentials, RingCentral sandbox account's username and password.
 
     You are good to run the demo now:
 
@@ -31,49 +31,85 @@
 
     Open your browser at http://localhost:3002
 
-.step(data-title='Design the Web UI', data-file='views/index.ejs', data-highlight='39-43')
+.step(data-title='Design the Web app UI', data-file='views/index.ejs', data-highlight='39-43')
   :markdown
-    ### Get from and to date
-
-    First, we create a web page and add the 2 inputs for taking the dates from and to. The _From Date_ and _To Date_ will define the period of time we want to read the call log data.
+    ### Add the From and To date pickers
 
     ![](images/main_menu.png)
 
-    The call-log API also takes other parameters but they might not be needed so hide them and make them visible when clicking the __Show Options__
+    Now, let's create a web page and add 2 date pickers for taking the dates. The _From Date_ and _To Date_ will be used to specify the date range we want to read the call log data.
 
-.step(data-title='Phone number and extension number', data-file='views/index.ejs', data-highlight='53-56')
+    The call-log API also takes other parameters, but they are less frequently needed in this tutorial so we hide them to save some space and make them visible when we click the __Show Options__ button.
+
+.step(data-title='Phone number and Extension number', data-file='views/index.ejs', data-highlight='53-56')
   :markdown
-    ### Phone number and extension number filters.
+    ### Add the Phone number and Extension number filters.
 
     ![](images/Option1.png)
 
-    [Call-log API reference](https://developer.ringcentral.com/api-docs/latest/index.html#!#RefUserCallLog.html)
+    * If the __phoneNumber__ parameter is specified, the API returns all calls (both incoming and outgoing) containing the mentioned phone number of a caller or callee.
+
+    * If the __extensionNumber__ is specified, the API returns call log data for that particular extension only.
+
+    [See call-log API reference](https://developer.ringcentral.com/api-docs/latest/index.html#!#RefUserCallLog.html)
 
 .step(data-title='Direction and Type filters', data-file='views/index.ejs', data-highlight='58-69')
   :markdown
-    ### Direction and Type filters.
+    ### Add the Direction and Type filters.
 
     ![](images/Option2.png)
 
-    [Call-log API reference](https://developer.ringcentral.com/api-docs/latest/index.html#!#RefUserCallLog.html)
+    * If the __direction__ parameter is specified as _Inbound_ or _Outbound_, the API returns records with the specified direction only.
 
-.step(data-title='Transport and View filters', data-file='views/index.ejs', data-highlight='58-69')
+    * If the __type__ parameter is specified as _Voice_ or _Fax_, the API returns records for the specified type only.
+
+    [See call-log API reference](https://developer.ringcentral.com/api-docs/latest/index.html#!#RefUserCallLog.html)
+
+.step(data-title='Transport and View filters', data-file='views/index.ejs', data-highlight='70-80')
   :markdown
-    ### Transport and View filters.
+    ### Add the Transport and View filters.
 
     ![](images/Option3.png)
 
-    [Call-log API reference](https://developer.ringcentral.com/api-docs/latest/index.html#!#RefUserCallLog.html)
+    * If the __transport__ parameter is specified as _PSTN_ or _VoIP_, the API returns records with the specified transport only.
 
-.step(data-title='Blocked and recording calls', data-file='views/index.ejs', data-highlight='39-43')
+    * If the __view__ parameter is specified as _Simple_, the API returns records with basic information or extended data such as billing and leg type information, respectively.
+
+    [See call-log API reference](https://developer.ringcentral.com/api-docs/latest/index.html#!#RefUserCallLog.html)
+
+.step(data-title='Blocked and recording calls', data-file='views/index.ejs', data-highlight='81-82')
   :markdown
-    ### Read blocked calls and calls with recording
+    ### Add the Read blocked and With recording
 
     ![](images/Option4.png)
 
-    [Call-log API reference](https://developer.ringcentral.com/api-docs/latest/index.html#!#RefUserCallLog.html)
+    * If the __readBlocked__ flag is true, the API returns call log for calls from and to blocked numbers
 
-.step(data-title='Instantiate the RingCentral Node JS SDK', data-file='engine.js', data-highlight='4-10')
+    * If the __withRecoding__ flag is true, the API returns call log for calls with call recording.
+
+    [See call-log API reference](https://developer.ringcentral.com/api-docs/latest/index.html#!#RefUserCallLog.html)
+
+.step(data-title='Control Access Level', data-file='views/index.ejs', data-highlight='46-50')
+  :markdown
+    ### Add the dropdown list to define the access level
+
+    ![](images/Options_Read.png)
+
+    We also control the access level by adding the control parameter to tell our server how to access the call log. We will pass the access control to the POST query parameter
+
+.step(data-title='Create API query parameters', data-file='public/js/main.js', data-highlight='565-587')
+  :markdown
+    ### Create API query parameters - Client side
+
+    We detect specified parameters and make a POST request to send them to our server side.
+
+    Since the access level parameter is our own control, we pass the parameter to the POST query path.
+
+    ```
+    var url = "readlogs?access=" + $('#access_level').val();
+    ```
+
+.step(data-title='Implement server code', data-file='engine.js', data-highlight='4-10')
   :markdown
     ### Instantiate the RingCentral Node JS SDK
 
@@ -87,34 +123,88 @@
 
     To login RingCentral account, we call the `platform.login()` function with the account's username and password predefined in the _.env_ file.
 
-.step(data-title='Read the call log', data-file='engine.js', data-highlight='24-29')
+.step(data-title='Call the call-log API', data-file='engine.js', data-highlight='25-32')
   :markdown
-    ### Read the call log
+    ### Call the call-log API
 
     When the readCallLogs() function is called, we detects if the request is made to access the account level or the extension level then we define the endpoint accordingly.
 
-
-    We also get the API's query parameters from the client and .
+    Our server receives the call-log API's query parameters from the client as a JSON object in the __req.body__. We just use the platform instance to call the call-log API as highlighted below:
 
     ```
     platform.get(endpoint, req.body)
     ```
 
-.step(data-title='Read the call log', data-file='engine.js', data-highlight='31-41')
+.step(data-title='Retrieve call log records', data-file='engine.js', data-highlight='33-54')
   :markdown
-    ### Read the call log
+    ### Retrieve call log records
 
-    When the readCallLogs() function is called, we detects if the request is made to access the account level or the extension level then we define the endpoint accordingly.
+    Assumed that the API call was successful and we get the response from RingCentral server. We then extract the records array and send it to our client side.
+
+    If the call failed, we catch the error and respond to our client with an error message accordingly.
+
+.step(data-title='Parse call log data', data-file='public/js/main.js', data-highlight='576-584')
+  :markdown
+    ### Parse call log data
+
+    Upon the arrival of the response from our server, we check the response to see if it is an error or not.
+
+    If the response is call log data, we create a __CallLogsData__ object passing along the call log data. The __CallLogsData__ object is a class which parses the data and process the information to draw them on graphs.
+
+.step(data-title='Process call log data', data-file='public/js/main.js', data-highlight='62-100')
+  :markdown
+    ### Process call log data
+
+    In the __CallLogsData__ class constructor, we iterate thru the call log records array, detect the call type then count voice calls and faxes separately for different directions.
+
+    We also check the __record.result__ to identify if a call was resulted in a _missed call_ or has a _voicemail_.
+
+    To display overall calls results and actions, we implement a function ____addItemToExistingList()__ to parse and keep the information in the following arrays:
 
     ```
-        if (req.query.access == "account")
-          endpoint = '/account/~/call-log'
-        else
-          endpoint = '/account/~/extension/~/call-log'
+    this.faxInboundActions = []
+    this.faxOutboundActions = []
+
+    this.voiceInboundActions = []
+    this.voiceOutboundActions = []
+
+    this.faxInboundResults = []
+    this.faxOutboundResults = []
+
+    this.voiceInboundResults = []
+    this.voiceOutboundResults = []
     ```
 
-        We also get the API's query parameters from the client and .
+.step(data-title='Process call location', data-file='public/js/main.js', data-highlight='101-132')
+  :markdown
+    ### Process call location
 
-        ```
-        platform.get(endpoint, req.body)
-        ```
+    To prepare for displaying call location on the Google map, we parse the location data and map the call location and count number in the following arrays:
+
+    ```
+    this.inboundCallLocations = []
+    this.outboundCallLocations = []
+    ```
+
+.step(data-title='Generate calls density data', data-file='public/js/main.js', data-highlight='149-180')
+  :markdown
+    ### Generate calls density data
+
+    To sketch calls density around the clock, we implement the ____createCallsDensity()__ function to parse the __startTime__ of each call, convert it to local time then map it to the 24-hour time scale.
+
+    ```
+    this.timeSliceInbound = new Array(24)
+    this.timeSliceOutbound = new Array(24)
+    this.timeSliceMissedCalls = new Array(24)
+    this.timeSliceVoicemails = new Array(24)
+    ```
+
+.step(data-title='Display information on charts', data-file='public/js/main.js', data-highlight='477-562')
+  :markdown
+    ### Display information on charts
+
+    Finally, we implement the __drawGraphs()__ function which will be called automatically after we read call log data from the server or whenever we select a new item from the _Select Graphs_ dropdown list.
+
+    Within the __drawGraphs()__ function, we call functions to collect relevant data and draw the chart accordingly.
+
+    ![](images/Chart_Options.png)
