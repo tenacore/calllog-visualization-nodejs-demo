@@ -6,7 +6,6 @@ var rcsdk = new RC({
     appKey: process.env.CLIENT_ID,
     appSecret:process.env.CLIENT_SECRET
   })
-
 var platform = rcsdk.platform()
 
 var engine = module.exports = {
